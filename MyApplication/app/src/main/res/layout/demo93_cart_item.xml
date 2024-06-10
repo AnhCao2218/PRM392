@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product name"
+        android:id="@+id/demo93_cartItem_tvProducName"
+        android:layout_marginLeft="30dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quantity: 1"
+        android:id="@+id/demo93_cartItem_tvProducQuantity"
+        android:layout_marginLeft="30dp"/>
+
+</LinearLayout>

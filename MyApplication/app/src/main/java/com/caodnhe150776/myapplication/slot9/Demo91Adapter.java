@@ -1,6 +1,7 @@
 package com.caodnhe150776.myapplication.slot9;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,16 @@ public class Demo91Adapter extends BaseAdapter {
             holer.infoTV.setText(product.getInfo());
 
         }
+        //event
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Product91 product=mList.get(position);
+                Intent intent= new Intent(context,Demo92MainActivity.class);
+                intent.putExtra("PRODUCT",product);
+                context.startActivity(intent);
+            }
+        });
         return convertView;
     }
 

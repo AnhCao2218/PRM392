@@ -30,6 +30,7 @@ public class Demo91MainActivity extends AppCompatActivity {
     private ListView listView;
     private Demo91Adapter adapter;
     private List<Product91> list;
+    CartManager cartManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class Demo91MainActivity extends AppCompatActivity {
             return insets;
         });
         listView=findViewById(R.id.demo91_listview);
+        cartManager =CartManager.getInstance();
         list= new ArrayList<>();
         adapter= new Demo91Adapter(this,list);
         listView.setAdapter(adapter);
@@ -52,7 +54,7 @@ public class Demo91MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... voids) {
             StringBuilder response= new StringBuilder();
             try{
-                URL url= new URL("http://10.33.11.200:8080/aphp/select.php");
+                URL url= new URL("http://192.168.88.154:8080/aphp/select.php");
                 HttpURLConnection connection=(HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 BufferedReader reader= new BufferedReader(new InputStreamReader(connection.getInputStream()));
