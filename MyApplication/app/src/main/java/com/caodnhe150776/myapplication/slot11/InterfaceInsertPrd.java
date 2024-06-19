@@ -10,6 +10,6 @@ public interface InterfaceInsertPrd {
     @POST("create_product.php")
     Call<SvrResponsePrd> insertPrd(@Field("name") String name,
                                    @Field("price") String price,
-                                   @Field("description") String descriptiom);
+                                   @Field("description") String description);
 
 }
