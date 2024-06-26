@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "623386476343",
+    "project_id": "prm1-43073",
+    "storage_bucket": "prm1-43073.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623386476343:android:f35c7c58f0ede2365664b2",
+        "android_client_info": {
+          "package_name": "com.caodnhe150776.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqBaj5Mmj6BGuThBU33zynVw6huI2-fig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

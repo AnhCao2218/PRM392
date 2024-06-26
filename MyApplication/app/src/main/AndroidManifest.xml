@@ -19,8 +19,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".slot15.Demo15Activity"
+            android:exported="false" />
+        <activity
             android:name=".slot14.Demo141MainActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,9 +32,7 @@
         </activity>
         <activity
             android:name=".slot11.Demo111MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".slot9.Demo93CartActivity"
             android:exported="false" />
@@ -40,9 +41,7 @@
             android:exported="false" />
         <activity
             android:name=".slot9.Demo91MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".slot8.Demo82MainActivity"
             android:exported="true" />
