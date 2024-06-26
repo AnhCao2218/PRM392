@@ -2,6 +2,7 @@ package com.caodnhe150776.myproject.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,17 +25,22 @@ import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.caodnhe150776.myproject.R;
 import com.caodnhe150776.myproject.adapter.LoaiSPAdapter;
+import com.caodnhe150776.myproject.adapter.SanPhamMoiAdapter;
 import com.caodnhe150776.myproject.model.LoaiSp;
 import com.caodnhe150776.myproject.model.LoaiSpModel;
+import com.caodnhe150776.myproject.model.SanPhamMoi;
+import com.caodnhe150776.myproject.model.SanPhamMoiModel;
 import com.caodnhe150776.myproject.retrofit.ApiBanHang;
 import com.caodnhe150776.myproject.retrofit.RetrofitCilient;
 import com.caodnhe150776.myproject.utlis.Utlis;
 import com.google.android.material.navigation.NavigationView;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import org.jetbrains.annotations.Async;
 
@@ -54,6 +62,10 @@ public class MainActivity2 extends AppCompatActivity {
     List<LoaiSp> mangloaiSp;
     CompositeDisposable compositeDisposable= new CompositeDisposable();
     ApiBanHang apiBanHang;
+    List<SanPhamMoi> mangspMoi;
+    SanPhamMoiAdapter spAdapter;
+    NotificationBadge badge;
+    FrameLayout frameLayout;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,20 +80,100 @@ public class MainActivity2 extends AppCompatActivity {
         toolbar= findViewById(R.id.toolbarmanhinhchinh);
         viewFlipper= findViewById(R.id.viewlipper);
         recyclerView= findViewById(R.id.recycleview);
+        RecyclerView.LayoutManager layoutManager= new GridLayoutManager(this,2);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
         listViewManHinhChinh= findViewById(R.id.listviewmanhinhchinh);
+        badge=findViewById(R.id.menu_sl);
+        frameLayout=findViewById(R.id.framelayout);
         navigationView= findViewById(R.id.navigationview);
         drawerLayout=findViewById(R.id.drawerlayout);
         apiBanHang= RetrofitCilient.getInstance(Utlis.BASE_URL).create(ApiBanHang.class);
+
         ActionBar();
 
         mangloaiSp= new ArrayList<>();
+        mangspMoi= new ArrayList<>();
+        if(Utlis.manggiohang==null){
+            Utlis.manggiohang= new ArrayList<>();
+        }else {
+            int totalItem=0;
+            for (int i=0;i<Utlis.manggiohang.size();i++){
+                totalItem=totalItem+Utlis.manggiohang.get(i).getSoluong();
+            }
+            badge.setText(String.valueOf(totalItem));
+        }
+        frameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent giohang=new Intent(getApplicationContext(), GioHangActivity.class);
+                startActivity(giohang);
+            }
+        });
+
 
         if(isConnected(this)){
             ActionViewFliper();
             getLoaiSanPham();
+            getSpMoi();
+            getEventClick();
         }else {
             Toast.makeText(getApplicationContext(),"ko co internet, ",Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int totalItem=0;
+        for (int i=0;i<Utlis.manggiohang.size();i++){
+            totalItem=totalItem+Utlis.manggiohang.get(i).getSoluong();
+        }
+        badge.setText(String.valueOf(totalItem));
+    }
+
+    private void getEventClick() {
+        listViewManHinhChinh.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        Intent trangchu= new Intent(getApplicationContext(), MainActivity2.class);
+                        startActivity(trangchu);
+                        break;
+                    case 1:
+                        Intent dienthoai= new Intent(getApplicationContext(), DienThoaiActivity.class);
+                        dienthoai.putExtra("loai",1);
+                        startActivity(dienthoai);
+                        break;
+                    case 2:
+                        Intent laptop= new Intent(getApplicationContext(), LaptopActivity.class);
+                        laptop.putExtra("loai",2);
+                        startActivity(laptop);
+                        break;
+                }
+            }
+        });
+
+
+    }
+
+    private void getSpMoi() {
+        compositeDisposable.add(apiBanHang.getSpMoi()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        sanPhamMoiModel-> {
+                            if(sanPhamMoiModel.isSuccess()){
+                                mangspMoi=sanPhamMoiModel.getResult();
+                                spAdapter= new SanPhamMoiAdapter(getApplicationContext(),mangspMoi);
+                                recyclerView.setAdapter(spAdapter);
+                            }
+                        },
+                        throwable->{
+                            Toast.makeText(getApplicationContext(),"Khong ket noi duoc sever"+throwable.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                ));
     }
 
     private void getLoaiSanPham() {
