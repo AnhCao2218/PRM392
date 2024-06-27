@@ -3,6 +3,7 @@ package com.caodnhe150776.myproject.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -33,6 +34,7 @@ public class DangNhapActivity extends AppCompatActivity {
     EditText email,password;
     AppCompatButton btndangnhap;
     ApiBanHang apiBanHang;
+    boolean isLogin=false;
     CompositeDisposable compositeDisposable;
     @SuppressLint("MissingInflatedId")
     @Override
@@ -56,8 +58,42 @@ public class DangNhapActivity extends AppCompatActivity {
         if(Paper.book().read("email")!=null&&Paper.book().read("password")!=null){
             email.setText(Paper.book().read("email"));
             password.setText(Paper.book().read("password"));
+            if(Paper.book().read("isLogin")!=null){
+                boolean flag=Paper.book().read("isLogin");
+                if(flag){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //dangNhap(Paper.book().read("email"),Paper.book().read("password"));
+                        }
+                    },3000);
+                }
+            }
         }
         initControl();
+    }
+
+    private void dangNhap(String email, String pass) {
+        compositeDisposable.add(apiBanHang.dangNhap(email,pass)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        userModel -> {
+                            if(userModel.isSuccess()){
+                                isLogin=true;
+                                Paper.book().write("isLogin",isLogin);
+                                Utlis.user_current= userModel.getResult().get(0);
+                                //luu lai thong tin ng dung
+                                Paper.book().write("User",userModel.getResult().get(0));
+                                Intent intent= new Intent(getApplicationContext(), MainActivity2.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        },
+                        throwable -> {
+                            Toast.makeText(getApplicationContext(),throwable.getMessage(),Toast.LENGTH_LONG).show();
+                        }
+                ));
     }
 
 
@@ -88,22 +124,7 @@ public class DangNhapActivity extends AppCompatActivity {
                 }else {
                     Paper.book().write("email",str_email);
                     Paper.book().write("password",str_password);
-                    compositeDisposable.add(apiBanHang.dangNhap(str_email,str_password)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(
-                                    userModel -> {
-                                        if(userModel.isSuccess()){
-                                            Utlis.user_current= userModel.getResult().get(0);
-                                            Intent intent= new Intent(getApplicationContext(), MainActivity2.class);
-                                            startActivity(intent);
-                                            finish();
-                                        }
-                                    },
-                                    throwable -> {
-                                        Toast.makeText(getApplicationContext(),throwable.getMessage(),Toast.LENGTH_LONG).show();
-                                    }
-                            ));
+                    dangNhap(str_email,str_password);
                 }
             }
         });

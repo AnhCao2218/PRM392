@@ -64,8 +64,8 @@ public class ThanhToanActivity extends AppCompatActivity {
 
     private void countItem() {
         totalItem=0;
-        for (int i=0;i<Utlis.manggiohang.size();i++){
-            totalItem=totalItem+Utlis.manggiohang.get(i).getSoluong();
+        for (int i=0;i<Utlis.mangmuahang.size();i++){
+            totalItem=totalItem+Utlis.mangmuahang.get(i).getSoluong();
         }
     }
 
@@ -102,13 +102,14 @@ public class ThanhToanActivity extends AppCompatActivity {
                     String str_sdt=Utlis.user_current.getMobile();
                     int id=Utlis.user_current.getId();
 
-                    Log.d("test",new Gson().toJson(Utlis.manggiohang));
-                    compositeDisposable.add(apiBanHang.createOder(str_email,str_sdt,String.valueOf(tongtien),id,str_diachi, totalItem,new Gson().toJson(Utlis.manggiohang))
+                    Log.d("test",new Gson().toJson(Utlis.mangmuahang));
+                    compositeDisposable.add(apiBanHang.createOder(str_email,str_sdt,String.valueOf(tongtien),id,str_diachi, totalItem,new Gson().toJson(Utlis.mangmuahang))
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
                                     userModel -> {
                                         Toast.makeText(getApplicationContext(),"Thành Công",Toast.LENGTH_LONG).show();
+                                        Utlis.mangmuahang.clear();
                                         Intent intent= new Intent(getApplicationContext(), MainActivity2.class);
                                         startActivity(intent);
                                         finish();

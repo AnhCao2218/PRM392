@@ -36,6 +36,7 @@ import com.caodnhe150776.myproject.model.LoaiSp;
 import com.caodnhe150776.myproject.model.LoaiSpModel;
 import com.caodnhe150776.myproject.model.SanPhamMoi;
 import com.caodnhe150776.myproject.model.SanPhamMoiModel;
+import com.caodnhe150776.myproject.model.User;
 import com.caodnhe150776.myproject.retrofit.ApiBanHang;
 import com.caodnhe150776.myproject.retrofit.RetrofitCilient;
 import com.caodnhe150776.myproject.utlis.Utlis;
@@ -47,6 +48,7 @@ import org.jetbrains.annotations.Async;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.paperdb.Paper;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -66,6 +68,7 @@ public class MainActivity2 extends AppCompatActivity {
     SanPhamMoiAdapter spAdapter;
     NotificationBadge badge;
     FrameLayout frameLayout;
+    ImageView imgsearch;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,12 @@ public class MainActivity2 extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Paper.init(this);
+        if(Paper.book().read("User")!=null){
+            User user=Paper.book().read("User");
+            Utlis.user_current=user;
+        }
+        imgsearch=findViewById(R.id.imgsearch);
         toolbar= findViewById(R.id.toolbarmanhinhchinh);
         viewFlipper= findViewById(R.id.viewlipper);
         recyclerView= findViewById(R.id.recycleview);
@@ -89,7 +98,13 @@ public class MainActivity2 extends AppCompatActivity {
         navigationView= findViewById(R.id.navigationview);
         drawerLayout=findViewById(R.id.drawerlayout);
         apiBanHang= RetrofitCilient.getInstance(Utlis.BASE_URL).create(ApiBanHang.class);
-
+        imgsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            Intent intent= new Intent(getApplicationContext(), SearchActivity.class);
+            startActivity(intent);
+            }
+        });
         ActionBar();
 
         mangloaiSp= new ArrayList<>();
@@ -151,6 +166,17 @@ public class MainActivity2 extends AppCompatActivity {
                         laptop.putExtra("loai",2);
                         startActivity(laptop);
                         break;
+                    case 5:
+                        Intent donhang= new Intent(getApplicationContext(), XemDonActivity.class);
+
+                        startActivity(donhang);
+                        break;
+                    case 6:
+                        Paper.book().delete("User");
+                        Intent dangnhap= new Intent(getApplicationContext(), DangNhapActivity.class);
+                        startActivity(dangnhap);
+                        finish();
+                        break;
                 }
             }
         });
@@ -184,6 +210,7 @@ public class MainActivity2 extends AppCompatActivity {
                     loaiSpModel -> {
                         if(loaiSpModel.isSuccess()){
                         mangloaiSp= loaiSpModel.getResult();
+                        mangloaiSp.add(new LoaiSp("Đăng xuất",""));
                             adapter = new LoaiSPAdapter(getApplicationContext(),mangloaiSp);
                             listViewManHinhChinh.setAdapter(adapter);
                         }

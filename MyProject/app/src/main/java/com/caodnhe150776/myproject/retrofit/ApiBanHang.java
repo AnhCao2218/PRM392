@@ -2,6 +2,7 @@ package com.caodnhe150776.myproject.retrofit;
 
 
 
+import com.caodnhe150776.myproject.model.DonHangModel;
 import com.caodnhe150776.myproject.model.LoaiSpModel;
 import com.caodnhe150776.myproject.model.SanPhamMoiModel;
 import com.caodnhe150776.myproject.model.UserModel;
@@ -59,6 +60,15 @@ public interface ApiBanHang {
             @Field("chitiet") String chitiet
 
     );
-
+    @POST("xemdonhang.php")
+    @FormUrlEncoded
+    Observable<DonHangModel> xemDonHang(
+            @Field("userid") int id
+    );
+    @POST("timkiem.php")
+    @FormUrlEncoded
+    Observable<SanPhamMoiModel> search(
+            @Field("search") String search
+    );
 
 }
